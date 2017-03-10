@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset = "utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+            body{
+                text-align: center;
+            }
+            div.out{
+                margin-top: 25px;
+                margin-bottom: 20px;
+                margin-left: 10px;
+                margin-right: 290px;
+                width: 200px;
+                background-color: #42dcf4;
+                border-radius: 15px 20px 20px 5px;
+                text-align: left;
+            }
+            div.out-message{
+                margin-left: 10px;
+                margin-top: 5px;
+            }
+            div.my-name{
+                color: white;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            }
+            div.in{
+                margin-top: 25px;
+                margin-bottom: 20px;
+                margin-left: 290px;
+                margin-right: 10px;
+                width: 200px;
+                background-color: #b0f235;
+                border-radius: 20px 15px 5px 20px;
+                text-align: right;
+            }
+            div.in-message{
+                margin-right: 10px;
+                margin-top: 5px;
+            }
+            div.name{
+                color: white;
+                margin-right: 10px;
+                margin-bottom: 5px;
+            }
+    </style>
+    
+  </head>
+  <body>
+  <div id = "hiddenvar" style = "display: none"></div>
+  <div id = "chatNumber" style = "display: none"></div>
+  <div id = 'stream' style = "width: 500px; height:100%; margin: 0 auto; border: solid black 1px; background-color: white;"></div>
+  <form id = "myForm">
+      <textarea id = "inputHere" rows="3" cols="52" style = "resize:none; font-family: arial;"></textarea>
+  </form>
+  <button onclick = "printInput()">submit</button>
+    <script>
+    var username;
+    var chat;
+    var visibility = true;
+    console.log(localStorage.getItem("name"));
+      function activateHiddenvar(me){
+            var shortMe = me.replace("@hsnet.ahsd.org","");
+            document.getElementById('hiddenvar').innerHTML= shortMe;
+      }
+    
+      google.script.run.withSuccessHandler(activateHiddenvar).getName();
+      
+      function activateChecker(checkNum){
+            document.getElementById('chatNumber').innerHTML= checkNum;
+      }
+      
+      google.script.run.withSuccessHandler(activateChecker).getCheckNum();
+    
+      function onSuccess(data){
+        username = document.getElementById('hiddenvar').innerHTML;
+        chat = document.getElementById('stream');
+        for(var i = 1; i < data.length; i++){
+          var name = data[i][1].replace("@hsnet.ahsd.org","");
+          if(username !== name){
+            chat.innerHTML += "<div class = 'in'><div class = 'in-message'>"+data[i][0]+"</div><div class = 'name'>"+name+"</div></div>";
+          }else{
+            chat.innerHTML += "<div class = 'out'><div class = 'out-message'>"+data[i][0]+"</div><div class = 'my-name'>"+name+"</div></div>";
+          }
+        }
+      }
+      
+      google.script.run.withSuccessHandler(onSuccess).getData();
+
+    function printInput(){
+      var input = document.getElementById("inputHere").value;
+      google.script.run.newMessage(input);
+      document.getElementById("myForm").reset();
+    }
+    
+    function checkForUpdate(currentNum){
+        var lastNum = parseInt(document.getElementById('chatNumber').innerHTML);
+        if(currentNum !== lastNum){
+          google.script.run.withSuccessHandler(update).getData();
+        }
+    }
+    
+    function update(data){
+      chat = document.getElementById('stream');
+      username = document.getElementById('hiddenvar').innerHTML;
+      var startNum = parseInt(document.getElementById('chatNumber').innerHTML);
+      for(var i = startNum; i < data.length; i++){
+          console.log(i);
+          var name = data[i][1].replace("@hsnet.ahsd.org","");
+          if(username !== name){
+            chat.innerHTML += "<div class = 'in'><div class = 'in-message'>"+data[i][0]+"</div><div class = 'name'>"+name+"</div></div>";
+            if(document.hidden){
+              notifyMe("New message: "+data[i][0]);
+            }
+          }else{
+            chat.innerHTML += "<div class = 'out'><div class = 'out-message'>"+data[i][0]+"</div><div class = 'my-name'>"+name+"</div></div>";
+          }
+          if(data[i][0] === "/ban Arjun"){
+                window.location = "https://www.pizzahut.com/#/home";
+          }
+          if(data[i][0] === "/ban CJ"){
+               window.location = "https://bienfromage.github.io/";
+          }
+      }
+      document.getElementById('chatNumber').innerHTML = data.length;
+    }
+    
+    setInterval(google.script.run.withSuccessHandler(checkForUpdate).getCheckNum, 500);
+    setTimeout(function(){window.scrollTo(0,document.body.scrollHeight);},1000);
+    
+    function notifyMe(note) {
+    // Let's check if the browser supports notifications
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    }
+    
+    // Let's check whether notification permissions have already been granted
+    else if (Notification.permission === "granted") {
+       // If it's okay let's create a notification
+       var notification = new Notification(note);
+    }
+   
+    // At last, if the user has denied notifications, and you 
+    // want to be respectful there is no need to bother them any more.
+    }
+    
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    }
+    else if (Notification.permission !== 'granted') {
+       Notification.requestPermission(function (permission) {
+       // If the user accepts, let's create a notification
+          if (permission === "granted") {
+            var notification = new Notification("Notifications now active for this account.");
+          }
+       });
+    }
+    
+    </script>
+  </body>
+</html>
