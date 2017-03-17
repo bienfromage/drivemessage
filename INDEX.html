@@ -7,44 +7,36 @@
     <style>
             body{
                 text-align: center;
+                margin: 0px;
             }
             div.out{
-                margin-top: 25px;
-                margin-bottom: 20px;
-                margin-left: 10px;
-                margin-right: 290px;
-                width: 200px;
+                margin: 10px auto 10px 10px;
                 background-color: #42dcf4;
                 border-radius: 15px 20px 20px 5px;
                 text-align: left;
-            }
-            div.out-message{
-                margin-left: 10px;
-                margin-top: 5px;
-            }
-            div.my-name{
-                color: white;
-                margin-left: 10px;
-                margin-bottom: 5px;
+                padding: 10px;
+                float: left;
+                word-wrap: break-word;
+                max-width: 420px;
             }
             div.in{
-                margin-top: 25px;
-                margin-bottom: 20px;
-                margin-left: 290px;
-                margin-right: 10px;
-                width: 200px;
+                margin: 10px 10px 10px auto;
                 background-color: #b0f235;
                 border-radius: 20px 15px 5px 20px;
                 text-align: right;
-            }
-            div.in-message{
-                margin-right: 10px;
-                margin-top: 5px;
+                padding: 10px;
+                float: right;
+                word-wrap: break-word;
+                max-width: 420px;
             }
             div.name{
                 color: white;
-                margin-right: 10px;
-                margin-bottom: 5px;
+            }
+            div.fill{
+                overflow: hidden;
+            }
+            img{
+                max-width: 400px;
             }
     </style>
     
@@ -52,7 +44,7 @@
   <body>
   <div id = "hiddenvar" style = "display: none"></div>
   <div id = "chatNumber" style = "display: none"></div>
-  <div id = 'stream' style = "width: 500px; height:100%; margin: 0 auto; border: solid black 1px; background-color: white;"></div>
+  <div id = 'stream' style = "max-width: 1000px; height:100%; margin: 0 auto; border: solid black 1px; background-color: white; overflow: hidden;"></div>
   <form id = "myForm">
       <textarea id = "inputHere" rows="3" cols="52" style = "resize:none; font-family: arial;"></textarea>
   </form>
@@ -61,7 +53,7 @@
     var username;
     var chat;
     var visibility = true;
-    console.log(localStorage.getItem("name"));
+    
       function activateHiddenvar(me){
             var shortMe = me.replace("@hsnet.ahsd.org","");
             document.getElementById('hiddenvar').innerHTML= shortMe;
@@ -79,11 +71,11 @@
         username = document.getElementById('hiddenvar').innerHTML;
         chat = document.getElementById('stream');
         for(var i = 1; i < data.length; i++){
-          var name = data[i][1].replace("@hsnet.ahsd.org","");
+          var name = data[i][1];
           if(username !== name){
-            chat.innerHTML += "<div class = 'in'><div class = 'in-message'>"+data[i][0]+"</div><div class = 'name'>"+name+"</div></div>";
+            chat.innerHTML += "<div class = 'fill'><div class = 'in'>"+data[i][0]+"<div class = 'name'>"+name+"</div></div></div>";
           }else{
-            chat.innerHTML += "<div class = 'out'><div class = 'out-message'>"+data[i][0]+"</div><div class = 'my-name'>"+name+"</div></div>";
+            chat.innerHTML += "<div class = 'fill'><div class = 'out'>"+data[i][0]+"<div class = 'name'>"+name+"</div></div></div>";
           }
         }
       }
@@ -93,7 +85,8 @@
     function printInput(){
       var input = document.getElementById("inputHere").value;
       google.script.run.newMessage(input);
-      document.getElementById("myForm").reset();
+      var resetEnter = document.getElementById('myForm');
+      resetEnter.reset();
     }
     
     function checkForUpdate(currentNum){
@@ -108,21 +101,17 @@
       username = document.getElementById('hiddenvar').innerHTML;
       var startNum = parseInt(document.getElementById('chatNumber').innerHTML);
       for(var i = startNum; i < data.length; i++){
-          console.log(i);
-          var name = data[i][1].replace("@hsnet.ahsd.org","");
+          var name = data[i][1];
           if(username !== name){
-            chat.innerHTML += "<div class = 'in'><div class = 'in-message'>"+data[i][0]+"</div><div class = 'name'>"+name+"</div></div>";
+            chat.innerHTML += "<div class = 'fill'><div class = 'in'>"+data[i][0]+"<div class = 'name'>"+name+"</div></div></div>";
             if(document.hidden){
               notifyMe("New message: "+data[i][0]);
             }
           }else{
-            chat.innerHTML += "<div class = 'out'><div class = 'out-message'>"+data[i][0]+"</div><div class = 'my-name'>"+name+"</div></div>";
+            chat.innerHTML += "<div class = 'fill'><div class = 'out'>"+data[i][0]+"<div class = 'name'>"+name+"</div></div></div>";
           }
           if(data[i][0] === "/ban Arjun"){
                 window.location = "https://www.pizzahut.com/#/home";
-          }
-          if(data[i][0] === "/ban CJ"){
-               window.location = "https://bienfromage.github.io/";
           }
       }
       document.getElementById('chatNumber').innerHTML = data.length;
@@ -159,6 +148,14 @@
        });
     }
     
+    document.onkeydown = function (e) {
+      e = e || window.event;
+      if(e.which === 13 || e.keyCode === 13) {
+        e.preventDefault();
+        printInput();
+      }
+    }
+
     </script>
   </body>
 </html>
