@@ -9,8 +9,8 @@ Please note that this form of database is not fast. It would not be appropriate 
 ## Create your own message service with drivemessage:
 1. Create a Google Script Project at https://www.google.com/script/start/
 1. Click "File > New > HTML file." Call the new file "INDEX" in all caps
-1. Copy the [INDEX.html](https://github.com/bienfromage/drivemessage/blob/master/INDEX.html) file from this repository to the code.js file on your project
-1. Copy the [code.gs](https://github.com/bienfromage/drivemessage/blob/master/code.gs) file from this repository to the code.js file on your project
+1. Copy the [INDEX.html](https://github.com/bienfromage/drivemessage/blob/master/INDEX.html) file from this repository to the code.js file on your project. Be sure to click the save icon on the toolbar.
+1. Copy the [code.gs](https://github.com/bienfromage/drivemessage/blob/master/code.gs) file from this repository to the code.js file on your project. Be sure to click the save icon on the toolbar.
 1. Create a Google Sheet. Take note of the URL
 1. Replace the parts of the code.gs file labeled "identification" with the id code from your google sheet. 
   ex: https://docs.google.com/spreadsheets/d/google/ **id is here** /edit
